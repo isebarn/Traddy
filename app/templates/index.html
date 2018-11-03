@@ -17,20 +17,60 @@
 
 
             $('form#emit').submit(function(event) {
-                socket.emit('send_id', {order_id: $('#order_id').val()});
+                socket.emit
+                (
+                    'SLCalc', 
+                        {
+                            price: $('#price').val(),
+                            TP_price: $('#TP_price').val(),
+                            SL_price: $('#SL_price').val(),
+                            min_win_ratio: $('#min_win_ratio').val(),
+                            max_loss: $('#max_loss').val(),
+                            money: $('#money').val(),
+                        });
                 return false;
             });
-
-
         });
     </script>
 </head>
 <body>
-    <h1>Flask-SocketIO Test</h1>
-    <h2>Send:</h2>
+    <h1>SLCalc</h1>
     <form id="emit" method="POST" action='#'>
-        <input type="text" name="order_id" id="order_id" placeholder="Message">
-        <input type="submit" value="Echo">
+        Pair: 
+        <select>
+          <option id="Other" value="Other"></option>
+          <option id="eurusd" value="EURUSD">EURUSD</option>
+          <option id="gbpusd" value="GBPUSD">GBPUSD</option>
+        </select>
+        <br>
+        <br>
+        
+        Price:<br>
+        <input type="text" id="price">
+        <br>
+
+        TP price:<br>
+        <input type="text" id="TP_price">
+        <br>
+
+        SL price:<br>
+        <input type="text" id="SL_price">
+        <br>
+
+        Min win ratio:<br>
+        <input type="text" id="min_win_ratio">
+        <br>
+
+        Max loss (%):<br>
+        <input type="text" id="max_loss">
+        <br>
+
+        Money:<br>
+        <input type="text" id="money">
+        <br>
+
+        <br>
+        <input type="submit" value="Calculate">
     </form>
     <h2>Receive:</h2>
     <div id="log"></div>

@@ -22,4 +22,4 @@ socketio = SocketIO(app, async_mode=async_mode)
 thread = None
 thread_lock = Lock()
 
-from app import routes, models
+from app import routes, models, sockets
