@@ -15,6 +15,12 @@
                 $('#log').append('<br>' + $('<div/>').text(msg.data).html());
             });
 
+            socket.on('sl_result', function(sl_result) {
+                var units = document.getElementById('units').innerHTML = 'units: ' + sl_result.units;
+                var TP = document.getElementById('TP').innerHTML = 'TP: ' + sl_result.TP;
+                var SL = document.getElementById('SL').innerHTML = 'SL: ' + sl_result.SL;
+            });            
+
 
             $('form#emit').submit(function(event) {
                 socket.emit
@@ -25,8 +31,8 @@
                             TP_price: $('#TP_price').val(),
                             SL_price: $('#SL_price').val(),
                             min_win_ratio: $('#min_win_ratio').val(),
-                            max_loss: $('#max_loss').val(),
-                            money: $('#money').val(),
+                            percentage: $('#percentage').val(),
+                            margin: $('#margin').val(),
                         });
                 return false;
             });
@@ -46,33 +52,36 @@
         <br>
         
         Price:<br>
-        <input type="text" id="price">
+        <input type="number" step="0.0001" id="price">
         <br>
 
         TP price:<br>
-        <input type="text" id="TP_price">
+        <input type="number" step="0.0001" id="TP_price">
         <br>
 
         SL price:<br>
-        <input type="text" id="SL_price">
+        <input type="number" step="0.0001" id="SL_price">
         <br>
 
         Min win ratio:<br>
-        <input type="text" id="min_win_ratio">
+        <input type="number" step="0.01" id="min_win_ratio">
         <br>
 
         Max loss (%):<br>
-        <input type="text" id="max_loss">
+        <input type="number" id="percentage">
         <br>
 
-        Money:<br>
-        <input type="text" id="money">
+        margin:<br>
+        <input type="number" id="margin">
         <br>
 
         <br>
         <input type="submit" value="Calculate">
     </form>
-    <h2>Receive:</h2>
-    <div id="log"></div>
+    <div>
+        <p align="left" id="units">
+        <p align="left" id="TP">
+        <p align="left" id="SL">
+    </div>
 </body>
 </html>
