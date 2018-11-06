@@ -1,28 +1,63 @@
 <!DOCTYPE HTML>
 <html>
 <head>
-    <title>Flask-SocketIO Test</title>
+    <title>Trading daddy</title>
     <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='index.css') }}">
     <script type="text/javascript" charset="utf-8">
         $(document).ready(function() {
             namespace = '/test';
 
             var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
+            socket.on('connect', function() {
+                socket.emit('request_ui_data', {data: ''});
+            });
 
             socket.on('response', function(msg) {
                 $('#log').append('<br>' + $('<div/>').text(msg.data).html());
             });
 
-            socket.on('sl_result', function(sl_result) {
-                var units = document.getElementById('units').innerHTML = 'units: ' + sl_result.units;
-                var TP = document.getElementById('TP').innerHTML = 'TP: ' + sl_result.TP;
-                var SL = document.getElementById('SL').innerHTML = 'SL: ' + sl_result.SL;
+            socket.on('ui_data', function(pairs_string) {
+                var pairs = JSON.parse(pairs_string)
+
+                var select = document.getElementById("pairs"); 
+
+                for (var i = 0; i < pairs.length; i++){
+                    var pair = pairs[i];
+
+                    var option = document.createElement("option");
+                    option.textContent = pair.pair;
+                    option.value = pair.id;
+                    
+                    select.appendChild(option);
+                }
             });            
 
+            socket.on('sl_result', function(sl_result) {
+                var units = document.getElementById('units').value = sl_result.units;
+                var TP = document.getElementById('TP').value = sl_result.TP;
+                var SL = document.getElementById('SL').value = sl_result.SL;
+            });       
 
-            $('form#emit').submit(function(event) {
+            socket.on('order', function(data) {
+
+                var t = document.querySelector('#productrow');
+
+                var tb = document.querySelector("tbody");
+                var clone = document.importNode(t.content, true);
+                td = clone.querySelectorAll("td");
+                td[0].textContent = data.units;
+                td[1].textContent = data.TP;
+                td[2].textContent = data.SL;
+
+                tb.appendChild(clone);
+
+            });       
+
+            $('form#calculator_form').submit(function(event) {
+
                 socket.emit
                 (
                     'SLCalc', 
@@ -36,52 +71,99 @@
                         });
                 return false;
             });
+
+            $('form#order_form').submit(function(event) {
+                socket.emit
+                (
+                    'Order', 
+                    {
+                        units: $('#units').val(),
+                        TP: $('#TP').val(),
+                        SL: $('#SL').val(),
+                    });
+
+                return false;
+            });            
         });
     </script>
 </head>
 <body>
-    <h1>SLCalc</h1>
-    <form id="emit" method="POST" action='#'>
-        Pair: 
-        <select>
-          <option id="Other" value="Other"></option>
-          <option id="eurusd" value="EURUSD">EURUSD</option>
-          <option id="gbpusd" value="GBPUSD">GBPUSD</option>
-        </select>
-        <br>
-        <br>
-        
-        Price:<br>
-        <input type="number" step="0.0001" id="price">
-        <br>
+    <div id="calculator" class="split left">
+        <h1>SL calculator</h1>
+        <form id="calculator_form" method="POST" action='#'>
+            Pair: <br>
+            <select id="pairs">
+              <option id="Other" value="Other"></option>
+            </select>
+            <br>
+            <br>
+            
+            Price:<br>
+            <input type="number" step="0.0001" id="price" value=1>
+            <br>
 
-        TP price:<br>
-        <input type="number" step="0.0001" id="TP_price">
-        <br>
+            TP price:<br>
+            <input type="number" step="0.0001" id="TP_price" value=1.5>
+            <br>
 
-        SL price:<br>
-        <input type="number" step="0.0001" id="SL_price">
-        <br>
+            SL price:<br>
+            <input type="number" step="0.0001" id="SL_price" value=0.999>
+            <br>
 
-        Min win ratio:<br>
-        <input type="number" step="0.01" id="min_win_ratio">
-        <br>
+            Min win ratio:<br>
+            <input type="number" step="0.01" id="min_win_ratio" value=1.5>
+            <br>
 
-        Max loss (%):<br>
-        <input type="number" id="percentage">
-        <br>
+            Max loss (%):<br>
+            <input type="number" id="percentage" value=1>
+            <br>
 
-        margin:<br>
-        <input type="number" id="margin">
-        <br>
+            margin:<br>
+            <input type="number" id="margin" value=10000>
+            <br>
 
+            <br>
+            <input type="submit" value="Calculate">
+        </form>
         <br>
-        <input type="submit" value="Calculate">
-    </form>
+        <br>
+        <form id="order_form" action='#'>
+            units: <br>
+            <input id="units">
+            <br>
+            TP: <br>
+            <input id="TP">
+            <br>
+            SL: <br>
+            <input id="SL">
+            <br>
+
+            <br>
+            <input type="submit" value="Save order">
+        </form>
     <div>
-        <p align="left" id="units">
-        <p align="left" id="TP">
-        <p align="left" id="SL">
+
+    <div id="order_table" class="split right">
+        <table id="producttable">
+          <thead>
+            <tr>
+              <td>units</td>
+              <td>TP</td>
+              <td>SL</td>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- existing data could optionally be included here -->
+          </tbody>
+        </table>
+
+        <template id="productrow">
+          <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </template>  
     </div>
 </body>
 </html>

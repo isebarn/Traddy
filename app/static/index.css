@@ -1,0 +1,57 @@
+.split {
+  height: 100%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+/* Control the left side */
+.left {
+  left: 0;
+  width: 20%;
+  background-color: #f2f2f2;
+}
+
+
+/* Control the right side */
+.right {
+  right: 0;
+  width: 80%;
+}
+
+
+input, select {
+    width: 80%;
+
+    padding-left: 6px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+th {
+    background-color: #4CAF50;
+    color: white;
+}
+
+table, th, td {
+   border: 1px solid black;
+}
+
+th, td {
+    border-bottom: 1px solid #ddd;
+}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
