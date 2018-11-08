@@ -55,7 +55,17 @@
 
                 tb.appendChild(clone);
 
-            });       
+            }); 
+
+            socket.on('serve_pair_price', function(data) {
+                var price = document.getElementById("price"); 
+
+                price.value = parseFloat(data['price'].toFixed(4))
+                console.log(typeof(data['price']))
+            
+                var SL_price = document.getElementById("SL_price"); 
+                SL_price.value = parseFloat(data['price'].toFixed(4))
+            });                   
 
             $('form#calculator_form').submit(function(event) {
 
@@ -84,7 +94,23 @@
                     });
 
                 return false;
-            });            
+            });  
+
+            var select = document.getElementById("pairs"); 
+            select.onchange = function(object){
+                var select = document.getElementById("pairs");
+                var option = select.options[select.selectedIndex]
+
+                socket.emit
+                (
+                    'request_pair_price', 
+                    {
+                        pair: option.textContent,
+                    });
+
+                return false;                
+            };
+
         });
     </script>
 </head>
@@ -93,14 +119,14 @@
         <h1>SL calculator</h1>
         <form id="calculator_form" method="POST" action='#'>
             Pair: <br>
-            <select id="pairs">
+            <select id="pairs" onchange="getComboA(this)">
               <option id="Other" value="Other"></option>
             </select>
             <br>
             <br>
             
             Price:<br>
-            <input type="number" step="0.0001" id="price" value=1>
+            <input type="number" step="0.0001" id="price">
             <br>
 
             TP price:<br>
@@ -108,7 +134,7 @@
             <br>
 
             SL price:<br>
-            <input type="number" step="0.0001" id="SL_price" value=0.999>
+            <input type="number" step="0.001" id="SL_price">
             <br>
 
             Min win ratio:<br>
