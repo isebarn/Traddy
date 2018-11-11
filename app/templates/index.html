@@ -13,7 +13,16 @@
 
             socket.on('connect', function() {
                 socket.emit('request_ui_data', {data: ''});
+                socket.emit('request_order_data', {data: ''});
             });
+
+            
+
+            socket.on('orders_data', function(msg) {
+                data = JSON.parse(msg)
+                var order_table = document.getElementById("order_table"); 
+                order_table.innerHTML = data.orders;
+            });            
 
             socket.on('response', function(msg) {
                 $('#log').append('<br>' + $('<div/>').text(msg.data).html());
@@ -61,7 +70,6 @@
                 var price = document.getElementById("price"); 
 
                 price.value = parseFloat(data['price'].toFixed(4))
-                console.log(typeof(data['price']))
             
                 var SL_price = document.getElementById("SL_price"); 
                 SL_price.value = parseFloat(data['price'].toFixed(4))
@@ -84,10 +92,19 @@
             });
 
             $('form#order_form').submit(function(event) {
+                var pair_select = document.getElementById("pairs")
+                var option = pair_select.options[pair_select.selectedIndex]
+                var pair_id = option.value
+
+                var price = document.getElementById("price").value
+                console.log(price)
+
                 socket.emit
                 (
                     'Order', 
                     {
+                        pair_id: pair_id,
+                        price: price,
                         units: $('#units').val(),
                         TP: $('#TP').val(),
                         SL: $('#SL').val(),
@@ -171,26 +188,7 @@
     <div>
 
     <div id="order_table" class="split right">
-        <table id="producttable">
-          <thead>
-            <tr>
-              <td>units</td>
-              <td>TP</td>
-              <td>SL</td>
-            </tr>
-          </thead>
-          <tbody>
-            <!-- existing data could optionally be included here -->
-          </tbody>
-        </table>
 
-        <template id="productrow">
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </template>  
     </div>
 </body>
 </html>

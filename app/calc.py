@@ -36,4 +36,3 @@ def SL(price, units_per_pip, TP_price, SL_price, min_win_ratio, percentage, marg
 	return {'units': total_units_to_buy, 'TP': TP, 'SL': SL}
 
 
-print(SL(1.0, 1e4, 1.005, 0.9990, 1.5, 1, 1e4))
