@@ -12,6 +12,8 @@ import urllib.request
 
 from flask_table import Table, Col
 
+from app.domain import Command
+
 
 @socketio.on('SLCalc', namespace='/test')
 def SLCalc(data):
@@ -24,17 +26,16 @@ def SLCalc(data):
 		 result,
 		 broadcast=False) 
 
+@socketio.on('pop', namespace='/test')
+def tst(data):
+	emit('orders_data',
+		 json.dumps({'heh':'1'}),
+		 broadcast=False)	
+
+
 @socketio.on('Order', namespace='/test')
 def order_handle(data):
-	order = Orders()
-	order.pair_id = data['pair_id']
-	order.price = data['price']
-	order.units = data['units']
-	order.tp = data['TP']
-	order.sl = data['SL']
-	order.version = 1
-	db.session.add(order)
-	db.session.commit()
+	Command().create_new_order(data)
 
 	orders = db.session.query(Orders, Pairs).filter(Orders.pair_id == Pairs.pair_id).all()
 

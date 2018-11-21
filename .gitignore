@@ -1,2 +1,5 @@
 /venv
-
+tests.py
+/__pycache__
+/app/__pycache__
+*.py[cod]
