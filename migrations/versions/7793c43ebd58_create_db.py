@@ -1,8 +1,8 @@
-"""create database
+"""create db
 
-Revision ID: 77d2838d0836
+Revision ID: 7793c43ebd58
 Revises: 
-Create Date: 2018-11-12 21:28:36.871588
+Create Date: 2018-11-22 20:47:28.046119
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '77d2838d0836'
+revision = '7793c43ebd58'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,7 +21,7 @@ def upgrade():
     op.create_table('pairs',
     sa.Column('pair_id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('pair', sa.String(length=64), nullable=True),
-    sa.Column('units_per_pip_usd', sa.Numeric(precision=7, scale=2), nullable=True),
+    sa.Column('std_lot_profit_per_pip', sa.Numeric(precision=4, scale=2), nullable=True),
     sa.Column('comission', sa.Numeric(precision=4, scale=2), nullable=True),
     sa.PrimaryKeyConstraint('pair_id'),
     sa.UniqueConstraint('pair')

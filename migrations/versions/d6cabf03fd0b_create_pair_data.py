@@ -1,8 +1,8 @@
-"""Pairs data
+"""create pair data
 
-Revision ID: 32ca9acaea41
-Revises: 65e5a1db4b17
-Create Date: 2018-11-22 19:24:29.671400
+Revision ID: d6cabf03fd0b
+Revises: 7793c43ebd58
+Create Date: 2018-11-22 20:47:36.825226
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '32ca9acaea41'
-down_revision = '65e5a1db4b17'
+revision = 'd6cabf03fd0b'
+down_revision = '7793c43ebd58'
 branch_labels = None
 depends_on = None
 
@@ -38,6 +38,7 @@ def seed_data():
 
 def upgrade():
     seed_data()
+
 
 def downgrade():
     pass
