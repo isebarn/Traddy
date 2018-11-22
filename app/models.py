@@ -9,7 +9,7 @@ from sqlalchemy.orm import relationship, backref
 class Pairs(db.Model):
 	pair_id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 	pair = db.Column(db.String(64), unique=True)
-	units_per_pip_usd = db.Column(db.Numeric(precision=7, scale=2))
+	std_lot_profit_per_pip = db.Column(db.Numeric(precision=4, scale=2))
 	comission = db.Column(db.Numeric(precision=4, scale=2))
 
 

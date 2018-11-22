@@ -17,7 +17,10 @@ from app.domain import Command
 
 @socketio.on('SLCalc', namespace='/test')
 def SLCalc(data):
-	data['units_per_pip'] = 1e4
+	pair = Pairs.query.filter_by(pair_id = data['pair_id']).all()[0]
+	data['std_lot_profit_per_pip'] = float(pair.std_lot_profit_per_pip)
+
+
 	data = dict((k,float(v)) for k,v in data.items())
 
 	result = SL(**data)
@@ -86,7 +89,7 @@ def request_order_data(data):
 def request_ui_data(data):
 	pairs = Pairs.query.all()
 
-	result = [{'id': pair.pair_id, 'pair': pair.pair, 'units_per_pip': float(pair.units_per_pip_usd), 'comission': float(pair.comission)} for pair in pairs]
+	result = [{'id': pair.pair_id, 'pair': pair.pair, 'std_lot_profit_per_pip': float(pair.std_lot_profit_per_pip), 'comission': float(pair.comission)} for pair in pairs]
 	print(result)
 	emit('ui_data',
 		 json.dumps(result),

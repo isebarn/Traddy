@@ -76,11 +76,11 @@
             });                   
 
             $('form#calculator_form').submit(function(event) {
-
                 socket.emit
                 (
                     'SLCalc', 
                         {
+                            pair_id: $('#pairs').val(),
                             price: $('#price').val(),
                             TP_price: $('#TP_price').val(),
                             SL_price: $('#SL_price').val(),
