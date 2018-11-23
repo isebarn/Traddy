@@ -48,6 +48,11 @@
             socket.on('sl_result', function(sl_result) {
                 var units = document.getElementById('units').value = sl_result.units;
                 var TP = document.getElementById('TP').value = sl_result.TP;
+
+                var TP_ratio = document.getElementById('TP_ratio')
+                TP_ratio.innerHTML = sl_result.ratio
+                TP_ratio.style.color = sl_result.success ? "green" : "red";                
+
                 var SL = document.getElementById('SL').value = sl_result.SL;
             });       
 
@@ -97,7 +102,6 @@
                 var pair_id = option.value
 
                 var price = document.getElementById("price").value
-                console.log(price)
 
                 socket.emit
                 (
@@ -175,7 +179,7 @@
             units: <br>
             <input id="units">
             <br>
-            TP: <br>
+            TP: <label id="TP_ratio"></label> <br>
             <input id="TP">
             <br>
             SL: <br>

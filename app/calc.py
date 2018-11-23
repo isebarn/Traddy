@@ -23,4 +23,7 @@ def SL(pair_id, std_lot_profit_per_pip, price, TP_price, SL_price, min_win_ratio
 
 	SL = round(total_pip_to_loss*10**pip_scale)
 
-	return {'units': round(total_units_to_buy/1000)*1000, 'TP': TP, 'SL': SL}
+	success = TP >= SL * min_win_ratio
+
+	return {'units': round(total_units_to_buy/1000)*1000, 
+	'TP': TP, 'SL': SL, 'ratio': round(float(TP/SL),2), 'success': success}
