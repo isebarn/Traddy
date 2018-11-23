@@ -12,8 +12,8 @@
             var socket = io.connect(location.protocol + '//' + document.domain + ':' + location.port + namespace);
 
             socket.on('connect', function() {
-                socket.emit('request_ui_data', {data: ''});
-                socket.emit('request_order_data', {data: ''});
+                socket.emit('request_ui_data');
+                socket.emit('request_order_data');
             });
 
             
@@ -21,7 +21,7 @@
             socket.on('orders_data', function(msg) {
                 data = JSON.parse(msg)
                 var order_table = document.getElementById("order_table"); 
-                order_table.innerHTML = data.orders;
+                order_table.innerHTML = data.orders_table;
             });            
 
             socket.on('response', function(msg) {
@@ -105,7 +105,7 @@
 
                 socket.emit
                 (
-                    'Order', 
+                    'order_handle', 
                     {
                         pair_id: pair_id,
                         price: price,

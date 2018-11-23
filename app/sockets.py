@@ -4,20 +4,16 @@ from app import app, socketio, db
 import json
 
 from app.calc import SL
+from app.UI import OrdersTable
 
 from app.models import Pairs, Orders
 
-from urllib.parse import urlencode, quote_plus
-import urllib.request
-
-from flask_table import Table, Col
-
-from app.domain import Command
+from app.domain import Command, Query, API
 
 
 @socketio.on('SLCalc', namespace='/test')
 def SLCalc(data):
-	pair = Pairs.query.filter_by(pair_id = data['pair_id']).all()[0]
+	pair = Query().query_pair_data(data['pair_id'])
 	data['std_lot_profit_per_pip'] = float(pair.std_lot_profit_per_pip)
 
 
@@ -29,68 +25,31 @@ def SLCalc(data):
 		 result,
 		 broadcast=False) 
 
-@socketio.on('pop', namespace='/test')
-def tst(data):
-	emit('orders_data',
-		 json.dumps({'heh':'1'}),
-		 broadcast=False)	
 
-
-@socketio.on('Order', namespace='/test')
+@socketio.on('order_handle', namespace='/test')
 def order_handle(data):
 	Command().create_new_order(data)
-
-	orders = db.session.query(Orders, Pairs).filter(Orders.pair_id == Pairs.pair_id).all()
-
-	html = OrdersTable(orders).__html__()	
-
-	result = {'orders': html}
-	emit('orders_data',
-		 json.dumps(result),
-		 broadcast=False)	
-
-# Define a table, then pass in the database records
-class OrdersTable(Table):
-	pair = Col('pair')
-	units = Col('units')
-	enter = Col('enter time')
-	price = Col('price')
-	sl = Col('stop loss')
-	tp = Col('take profit')
-
-	def create_item(self, order, pair):
-		return {
-		'pair': pair.pair,
-		'units': order.units,
-		'enter': order.enter,
-		'price': order.price,
-		'sl': order.sl,
-		'tp': order.tp,
-		}
-		
-
-	def __init__(self, data):
-		self.items = [self.create_item(entry[0], entry[1]) for entry in data]
-
+	request_order_data()
 
 @socketio.on('request_order_data', namespace='/test')
-def request_order_data(data):			
-	orders = db.session.query(Orders, Pairs).filter(Orders.pair_id == Pairs.pair_id).all()
+def request_order_data():			
+	orders = Query().query_all_orders()
 
 	html = OrdersTable(orders).__html__()	
 
-	result = {'orders': html}
+	result = {'orders_table': html}
+
 	emit('orders_data',
 		 json.dumps(result),
 		 broadcast=False)	
 
 
 @socketio.on('request_ui_data', namespace='/test')
-def request_ui_data(data):
-	pairs = Pairs.query.all()
+def request_ui_data():
+	pairs = Query().query_pair_list()
 
 	result = [{'id': pair.pair_id, 'pair': pair.pair, 'std_lot_profit_per_pip': float(pair.std_lot_profit_per_pip), 'comission': float(pair.comission)} for pair in pairs]
-	print(result)
+
 	emit('ui_data',
 		 json.dumps(result),
 		 broadcast=False)	
@@ -98,12 +57,8 @@ def request_ui_data(data):
 @socketio.on('request_pair_price', namespace='/test')
 def request_pair_price(data):
 	pair = data['pair']
-	api_key = app.config.get('FOREX_API')
-	base_url = "https://forex.1forge.com/1.0.3/quotes?"
-
-	url = base_url + urlencode({"pairs": pair, "api_key": api_key})	
-	response = urllib.request.urlopen(url)
-	price = json.loads(response.read())[0]['bid']
+	
+	price = API().request_pair_asking_price(pair)
 
 	emit('serve_pair_price',
 		 {'price': price},
