@@ -28,10 +28,10 @@ def seed_data():
     op.bulk_insert(
         pairs_table,
         [
-            {'pair': 'EURUSD', 'std_lot_profit_per_pip': 10.00, 'comission': 2.7, 'etoro_id': 1},
-            {'pair': 'GBPUSD', 'std_lot_profit_per_pip': 10.00, 'comission': 2.7, 'etoro_id': 2},
-            {'pair': 'USDJPY', 'std_lot_profit_per_pip': 8.91, 'comission': 2.7, 'etoro_id': 5},
-            {'pair': 'USDCAD', 'std_lot_profit_per_pip': 7.63, 'comission': 2.7, 'etoro_id': 4},
+            {'pair': 'EURUSD', 'std_lot_profit_per_pip': 10.00, 'comission': 2.7},
+            {'pair': 'GBPUSD', 'std_lot_profit_per_pip': 10.00, 'comission': 2.7},
+            {'pair': 'USDJPY', 'std_lot_profit_per_pip': 8.91, 'comission': 2.7},
+            {'pair': 'USDCAD', 'std_lot_profit_per_pip': 7.63, 'comission': 2.7},
         ]
     ) 	
 
