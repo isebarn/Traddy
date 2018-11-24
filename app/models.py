@@ -11,6 +11,7 @@ class Pairs(db.Model):
 	pair = db.Column(db.String(64), unique=True)
 	std_lot_profit_per_pip = db.Column(db.Numeric(precision=4, scale=2))
 	comission = db.Column(db.Numeric(precision=4, scale=2))
+	etoro_id = db.Column(db.Integer)
 
 
 class Orders(db.Model):
