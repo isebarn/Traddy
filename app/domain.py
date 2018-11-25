@@ -6,18 +6,6 @@ import urllib.request
 
 import json
 
-# TAKA TIL
-from bokeh.plotting import figure, output_file, show
-from bokeh.layouts import column, row, widgetbox
-from bokeh.models.widgets import DataTable, DateFormatter, TableColumn, CheckboxGroup
-from bokeh.models import ColumnDataSource
-from bokeh.sampledata.stocks import MSFT
-import pandas as pd
-from math import pi
-
-
-
-
 class Command():
 
 	def create_new_order(self, data):
