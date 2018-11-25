@@ -2,6 +2,9 @@
 <html>
 <head>
     <title>Trading daddy</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.min.js"></script>
+    <script src="https://cdn.rawgit.com/chartjs/chartjs-chart-financial/master/docs/Chart.Financial.js"></script>
     <script type="text/javascript" src="//code.jquery.com/jquery-1.4.2.min.js"></script>
     <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/socket.io/1.3.5/socket.io.min.js"></script>
     <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static',filename='index.css') }}">
@@ -13,9 +16,42 @@
 
             socket.on('connect', function() {
                 socket.emit('request_ui_data');
-                socket.emit('request_order_data');
+                socket.emit('request_order_data');                
             });
 
+
+            socket.on('pair_candlestick_chart', function(msg) {
+                var data = JSON.parse(msg)
+                var candle_data = data['candle_data']
+                var pair = data['pair']
+                var ctx = document.getElementById("candlestick_chart").getContext("2d");
+                ctx.canvas.width = 1000;
+                ctx.canvas.height = 500;
+                var candlestickChart = new Chart(ctx, {
+                    type: 'candlestick',
+                    data: {
+                        datasets: [{
+                            label: pair,
+                            data: candle_data
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            xAxes: [{
+                                type: 'time',
+                                time: {
+                                    displayFormats: {
+                                        hour: 'HH',
+                                        minute: 'HH:mm'
+                                    }
+                                }
+                            }]
+                        }
+                    }                    
+                });
+
+
+            }); 
             
 
             socket.on('orders_data', function(msg) {
@@ -127,7 +163,10 @@
                     'request_pair_price', 
                     {
                         pair: option.textContent,
-                    });
+                    }
+                );
+
+                socket.emit('request_pair_candlestick_chart', {pair: option.textContent});
 
                 return false;                
             };
@@ -190,6 +229,11 @@
             <input type="submit" value="Save order">
         </form>
     <div>
+
+    
+        <div class="split right">
+            <canvas id="candlestick_chart"></canvas>
+        <div>
 
     <div id="order_table" class="split right">
 

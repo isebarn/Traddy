@@ -52,7 +52,18 @@ def request_ui_data():
 
 	emit('ui_data',
 		 json.dumps(result),
+		 broadcast=False)
+
+@socketio.on('request_pair_candlestick_chart', namespace='/test')
+def request_pair_candlestick_chart(data):
+	etoro_id = Query().query_pair_etoro_id(data['pair'])
+
+	candle_data = API().request_pair_candle_data(etoro_id, 'OneHour', 20)
+
+	emit('pair_candlestick_chart',
+		 json.dumps({'candle_data': candle_data, 'pair': data['pair']}),
 		 broadcast=False)	
+
 
 @socketio.on('request_pair_price', namespace='/test')
 def request_pair_price(data):
